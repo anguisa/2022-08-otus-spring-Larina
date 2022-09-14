@@ -4,13 +4,17 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="resourceLoaderService" class="ru.otus.service.ResourceLoaderServiceImpl">
+    <bean id="questionParserCsv" class="ru.otus.parser.QuestionParserCsv">
+    </bean>
+
+    <bean id="questionResourceLoader" class="ru.otus.loader.ResourceLoaderCsv">
+        <constructor-arg name="fileName" value="quiz.csv"/>
+        <constructor-arg name="fileDelimiter" value="|"/>
+        <constructor-arg name="entityParser" ref="questionParserCsv"/>
     </bean>
 
     <bean id="questionDao" class="ru.otus.dao.QuestionDaoCsv">
-        <constructor-arg name="fileName" value="quiz.csv"/>
-        <constructor-arg name="fileDelimiter" value="|"/>
-        <constructor-arg name="resourceLoader" ref="resourceLoaderService"/>
+        <constructor-arg name="resourceLoader" ref="questionResourceLoader"/>
     </bean>
 
     <bean id="questionService" class="ru.otus.service.QuestionServiceImpl">

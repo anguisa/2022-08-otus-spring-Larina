@@ -1,6 +1,5 @@
 package ru.otus.service;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -10,6 +9,7 @@ import ru.otus.domain.Question;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class QuestionServiceTest {
@@ -18,7 +18,7 @@ public class QuestionServiceTest {
     private QuestionService questionService;
 
     @BeforeEach
-    public void beforeEach() {
+    public void setUp() {
         questionDao = mock(QuestionDao.class);
         questionService = new QuestionServiceImpl(questionDao);
     }
@@ -30,6 +30,6 @@ public class QuestionServiceTest {
             new Question("How old are you?", List.of(new Answer("18", false), new Answer("20", true), new Answer("25", false)))
         );
         Mockito.when(questionDao.findAllQuestions()).thenReturn(questions);
-        Assertions.assertIterableEquals(questions, questionService.findAllQuestions(), "Wrong questions");
+        assertThat(questionService.findAllQuestions()).isEqualTo(questions);
     }
 }
