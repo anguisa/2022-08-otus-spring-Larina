@@ -9,21 +9,16 @@ import java.util.Scanner;
 
 @Service
 public class IOServiceSystem implements IOService {
-    private PrintStream output;
-    private Scanner input;
+    
+    private final PrintStream output;
+    private final Scanner input;
 
     public IOServiceSystem() {
-    }
-
-    @PostConstruct
-    @Override
-    public void init() {
         output = System.out;
         input = new Scanner(System.in);
     }
 
     @PreDestroy
-    @Override
     public void close() {
         input.close();
     }

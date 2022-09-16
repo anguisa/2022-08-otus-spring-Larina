@@ -4,8 +4,4 @@ public interface InputService {
     int readIntWithPrompt(String prompt);
 
     String readStringWithPrompt(String prompt);
-
-    void init();
-
-    void close();
 }
