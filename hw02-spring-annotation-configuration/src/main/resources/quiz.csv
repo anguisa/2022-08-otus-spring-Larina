@@ -1,0 +1,5 @@
+What is a correct syntax to output "Hello World" in Java?|4|1|System.out.println("Hello World")|Console.WriteLine("Hello World")|echo("Hello World")|print ("Hello World")|
+How do you insert COMMENTS in Java code?|4|2|# This is a comment|// This is a comment|<!-- This is a comment -->|** This is a comment|
+Which data type is used to create a variable that should store text?|4|2|string|String|Txt|myString|
+How do you create a variable with the numeric value 5?|4|4|int32 x = 5|num x = 5|x = 5|int x = 5|
+Which method can be used to find the length of a string?|4|3|size()|len()|length()|getLength()|
