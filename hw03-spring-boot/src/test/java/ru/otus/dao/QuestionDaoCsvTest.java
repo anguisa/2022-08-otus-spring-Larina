@@ -1,10 +1,8 @@
 package ru.otus.dao;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.otus.domain.Answer;
 import ru.otus.domain.Question;
 import ru.otus.loader.ResourceLoader;
@@ -14,14 +12,13 @@ import ru.otus.parser.QuestionParserCsv;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 public class QuestionDaoCsvTest {
 
-    @Mock
+    @MockBean
     private ResourceLoader<String[]> resourceLoader;
 
     private EntityParserCsv<Question> questionParser;

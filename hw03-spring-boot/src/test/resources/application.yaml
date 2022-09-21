@@ -1,0 +1,10 @@
+application:
+  loader:
+    csv:
+      file_name: ""
+      file_delimiter: '|'
+  testing:
+    pass_score: 2
+    questions_count: 3
+  message:
+    locale: ru_RU
