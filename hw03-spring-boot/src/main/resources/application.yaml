@@ -1,0 +1,18 @@
+spring:
+  output:
+    ansi:
+      enabled: ALWAYS
+  messages:
+    basename: "i18n/messages"
+    encoding: "UTF-8"
+
+application:
+  loader:
+    csv:
+      file_name: "quiz_${application.message.locale}.csv"
+      file_delimiter: '|'
+  testing:
+    pass_score: 3
+    questions_count: 5
+  message:
+    locale: ru_RU
