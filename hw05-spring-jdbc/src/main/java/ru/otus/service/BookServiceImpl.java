@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 public class BookServiceImpl implements BookService {
 
     private final BookDao bookDao;
@@ -26,6 +25,7 @@ public class BookServiceImpl implements BookService {
         this.genreDao = genreDao;
     }
 
+    @Transactional
     @Override
     public Book insert(Book book) {
         populateAuthorAndGenreId(book);
@@ -36,6 +36,7 @@ public class BookServiceImpl implements BookService {
         return book;
     }
 
+    @Transactional
     @Override
     public Optional<Book> update(Book book) {
         populateAuthorAndGenreId(book);
@@ -68,6 +69,7 @@ public class BookServiceImpl implements BookService {
         book.getGenre().setId(getOrInsertBookGenreId(book));
     }
 
+    @Transactional
     @Override
     public boolean deleteById(long id) {
         return bookDao.deleteById(id);
