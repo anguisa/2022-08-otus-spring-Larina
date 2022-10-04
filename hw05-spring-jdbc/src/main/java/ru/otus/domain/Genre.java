@@ -16,10 +16,6 @@ public class Genre {
         this(null, title);
     }
 
-    public Genre(Long id) {
-        this(id, null);
-    }
-
     public Long getId() {
         return id;
     }

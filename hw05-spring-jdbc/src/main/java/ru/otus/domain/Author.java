@@ -16,10 +16,6 @@ public class Author {
         this(null, name);
     }
 
-    public Author(Long id) {
-        this(id, null);
-    }
-
     public Long getId() {
         return id;
     }
