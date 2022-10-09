@@ -46,6 +46,27 @@ public class BookServiceImpl implements BookService {
         return updated ? Optional.of(book) : Optional.empty();
     }
 
+    @Transactional
+    @Override
+    public boolean deleteById(long id) {
+        return bookDao.deleteById(id);
+    }
+
+    @Override
+    public Optional<Book> getById(long id) {
+        return bookDao.getById(id);
+    }
+
+    @Override
+    public List<Book> getAll() {
+        return bookDao.getAll();
+    }
+
+    @Override
+    public long count() {
+        return bookDao.count();
+    }
+
     private long getOrInsertBookAuthorId(Book book) {
         return authorDao.getByName(book.getAuthor().getName()).map(Author::getId)
             .orElseGet(() -> authorDao.insert(book.getAuthor()));
@@ -67,26 +88,5 @@ public class BookServiceImpl implements BookService {
 
     private void populateGenreId(Book book) {
         book.getGenre().setId(getOrInsertBookGenreId(book));
-    }
-
-    @Transactional
-    @Override
-    public boolean deleteById(long id) {
-        return bookDao.deleteById(id);
-    }
-
-    @Override
-    public Optional<Book> getById(long id) {
-        return bookDao.getById(id);
-    }
-
-    @Override
-    public List<Book> getAll() {
-        return bookDao.getAll();
-    }
-
-    @Override
-    public long count() {
-        return bookDao.count();
     }
 }
