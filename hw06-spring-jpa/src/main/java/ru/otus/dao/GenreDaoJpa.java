@@ -1,6 +1,6 @@
 package ru.otus.dao;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import ru.otus.domain.Genre;
 
 import javax.persistence.EntityManager;
@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Repository
+@Component
 public class GenreDaoJpa implements GenreDao {
 
     @PersistenceContext

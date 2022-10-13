@@ -9,6 +9,7 @@ import ru.otus.domain.Author;
 import ru.otus.domain.Book;
 import ru.otus.domain.Genre;
 import ru.otus.dto.BookDto;
+import ru.otus.dto.converter.DtoConverter;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,27 +20,29 @@ public class BookServiceImpl implements BookService {
     private final BookDao bookDao;
     private final AuthorDao authorDao;
     private final GenreDao genreDao;
+    private final DtoConverter<Book, BookDto> bookConverter;
 
-    public BookServiceImpl(BookDao bookDao, AuthorDao authorDao, GenreDao genreDao) {
+    public BookServiceImpl(BookDao bookDao, AuthorDao authorDao, GenreDao genreDao, DtoConverter<Book, BookDto> bookConverter) {
         this.bookDao = bookDao;
         this.authorDao = authorDao;
         this.genreDao = genreDao;
+        this.bookConverter = bookConverter;
     }
 
     @Transactional
     @Override
     public BookDto insert(BookDto bookDto) {
-        Book book = bookDto.fromDto();
+        Book book = bookConverter.fromDto(bookDto);
         populateAuthorAndGenres(book);
-        return new BookDto(bookDao.save(book));
+        return bookConverter.toDto(bookDao.save(book));
     }
 
     @Transactional
     @Override
     public BookDto update(BookDto bookDto) {
-        Book book = bookDto.fromDto();
+        Book book = bookConverter.fromDto(bookDto);
         populateAuthorAndGenres(book);
-        return new BookDto(bookDao.save(book));
+        return bookConverter.toDto(bookDao.save(book));
     }
 
     @Transactional
@@ -48,16 +51,14 @@ public class BookServiceImpl implements BookService {
         return bookDao.deleteById(id);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public Optional<BookDto> getById(long id) {
-        return bookDao.getById(id).map(BookDto::new);
+        return bookDao.getById(id).map(bookConverter::toDto);
     }
 
-    @Transactional(readOnly = true) // чтобы могли извлечься LAZY-сущности, которые не инициализируются в dao
     @Override
     public List<BookDto> getAll() {
-        return bookDao.getAll().stream().map(BookDto::new).collect(Collectors.toList());
+        return bookDao.getAll().stream().map(bookConverter::toDto).collect(Collectors.toList());
     }
 
     @Override

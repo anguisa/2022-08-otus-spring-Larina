@@ -1,15 +1,9 @@
 package ru.otus.dto;
 
-import ru.otus.domain.Author;
-
 public class AuthorDto {
 
     private Long id;
     private final String name;
-
-    public AuthorDto(Author delegate) {
-        this(delegate.getId(), delegate.getName());
-    }
 
     public AuthorDto(Long id, String name) {
         this.id = id;
@@ -41,7 +35,4 @@ public class AuthorDto {
             '}';
     }
 
-    public Author fromDto() {
-        return new Author(id, name);
-    }
 }

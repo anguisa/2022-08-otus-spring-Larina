@@ -28,9 +28,9 @@ class BookDaoJpaTest {
         new Genre(1L, "Детектив"), new Genre(2L, "Фантастика")
     );
     private static final List<Book> EXPECTED_BOOKS = List.of(
-        new Book(1L, "Мой детектив", EXPECTED_AUTHORS.get(0), List.of(EXPECTED_GENRES.get(0))),
-        new Book(2L, "Необычная фантастика", EXPECTED_AUTHORS.get(1), List.of(EXPECTED_GENRES.get(1))),
-        new Book(3L, "Смешной детектив", EXPECTED_AUTHORS.get(1), EXPECTED_GENRES)
+        new Book(1L, "Мой детектив", EXPECTED_AUTHORS.get(0), List.of(EXPECTED_GENRES.get(0)), null),
+        new Book(2L, "Необычная фантастика", EXPECTED_AUTHORS.get(1), List.of(EXPECTED_GENRES.get(1)), null),
+        new Book(3L, "Смешной детектив", EXPECTED_AUTHORS.get(1), EXPECTED_GENRES, null)
     );
 
     @Autowired
@@ -55,7 +55,7 @@ class BookDaoJpaTest {
         Genre genre = em.find(Genre.class, EXPECTED_GENRES.get(0).getId());
 
         String randomTxt = UUID.randomUUID().toString();
-        Book expectedBook = new Book(null, "My title " + randomTxt, author, List.of(genre));
+        Book expectedBook = new Book(null, "My title " + randomTxt, author, List.of(genre), null);
 
         expectedBook = bookDao.save(expectedBook);
 
@@ -82,7 +82,7 @@ class BookDaoJpaTest {
         Author author = em.find(Author.class, EXPECTED_AUTHORS.get(1).getId());
         Genre genre = em.find(Genre.class, EXPECTED_GENRES.get(1).getId());
         String randomTxt = UUID.randomUUID().toString();
-        Book updatedBook = new Book(initialBook.getId(), "My title " + randomTxt, author, List.of(genre));
+        Book updatedBook = new Book(initialBook.getId(), "My title " + randomTxt, author, List.of(genre), null);
 
         bookDao.save(updatedBook);
 

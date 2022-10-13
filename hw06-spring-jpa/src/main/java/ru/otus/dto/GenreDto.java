@@ -1,14 +1,8 @@
 package ru.otus.dto;
 
-import ru.otus.domain.Genre;
-
 public class GenreDto {
     private Long id;
     private final String title;
-
-    public GenreDto(Genre delegate) {
-        this(delegate.getId(), delegate.getTitle());
-    }
 
     public GenreDto(Long id, String title) {
         this.id = id;
@@ -40,7 +34,4 @@ public class GenreDto {
             '}';
     }
 
-    public Genre fromDto() {
-        return new Genre(id, title);
-    }
 }

@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+import ru.otus.domain.Author;
 import ru.otus.domain.Book;
 import ru.otus.domain.Comment;
+import ru.otus.domain.Genre;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,10 +22,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Import(CommentDaoJpa.class)
 class CommentDaoJpaTest {
 
+    private static final Author EXPECTED_AUTHOR = new Author(1L, "Маша Васильева");
+    private static final Genre EXPECTED_GENRE = new Genre(1L, "Стихотворение");
     private static final List<Book> EXPECTED_BOOKS = List.of(
-        new Book(1L, "Мой детектив"),
-        new Book(2L, "Необычная фантастика"),
-        new Book(3L, "Смешной детектив")
+        new Book(1L, "Мой детектив", EXPECTED_AUTHOR, List.of(EXPECTED_GENRE), null),
+        new Book(2L, "Необычная фантастика", EXPECTED_AUTHOR, List.of(EXPECTED_GENRE), null),
+        new Book(3L, "Смешной детектив", EXPECTED_AUTHOR, List.of(EXPECTED_GENRE), null)
     );
     private static final List<Comment> EXPECTED_COMMENTS = List.of(
         new Comment(1L, "Интересная", EXPECTED_BOOKS.get(0)),

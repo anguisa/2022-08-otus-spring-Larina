@@ -1,24 +1,12 @@
 package ru.otus.dto;
 
-import ru.otus.domain.Book;
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class BookDto {
     private Long id;
     private final String title;
     private final AuthorDto author;
     private final List<GenreDto> genres;
-
-    public BookDto(Book delegate) {
-        this(
-            delegate.getId(),
-            delegate.getTitle(),
-            new AuthorDto(delegate.getAuthor()),
-            (delegate.getGenres() == null) ? null : delegate.getGenres().stream().map(GenreDto::new).collect(Collectors.toList())
-        );
-    }
 
     public BookDto(Long id) {
         this(id, null, null, null);
@@ -66,12 +54,4 @@ public class BookDto {
             '}';
     }
 
-    public Book fromDto() {
-        return new Book(
-            id,
-            title,
-            (author == null) ? null : author.fromDto(),
-            (genres == null) ? null : genres.stream().map(GenreDto::fromDto).collect(Collectors.toList())
-        );
-    }
 }

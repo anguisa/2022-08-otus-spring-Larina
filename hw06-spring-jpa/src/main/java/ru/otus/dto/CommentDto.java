@@ -1,27 +1,17 @@
 package ru.otus.dto;
 
-import ru.otus.domain.Comment;
-
 public class CommentDto {
     private Long id;
     private final String text;
-    private final BookShortDto book;
+    private final BookDto book;
 
-    public CommentDto(Comment delegate) {
-        this(
-            delegate.getId(),
-            delegate.getText(),
-            new BookShortDto(delegate.getBook())
-        );
-    }
-
-    public CommentDto(Long id, String text, BookShortDto book) {
+    public CommentDto(Long id, String text, BookDto book) {
         this.id = id;
         this.text = text;
         this.book = book;
     }
 
-    public CommentDto(String text, BookShortDto book) {
+    public CommentDto(String text, BookDto book) {
         this(null, text, book);
     }
 
@@ -38,16 +28,8 @@ public class CommentDto {
         return text;
     }
 
-    public BookShortDto getBook() {
+    public BookDto getBook() {
         return book;
-    }
-
-    public Comment fromDto() {
-        return new Comment(
-            id,
-            text,
-            (book == null) ? null : book.fromDto()
-        );
     }
 
     @Override

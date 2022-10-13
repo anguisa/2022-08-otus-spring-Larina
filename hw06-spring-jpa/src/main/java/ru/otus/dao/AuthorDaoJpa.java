@@ -1,6 +1,6 @@
 package ru.otus.dao;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import ru.otus.domain.Author;
 
 import javax.persistence.EntityManager;
@@ -9,7 +9,7 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+@Component
 public class AuthorDaoJpa implements AuthorDao {
 
     @PersistenceContext

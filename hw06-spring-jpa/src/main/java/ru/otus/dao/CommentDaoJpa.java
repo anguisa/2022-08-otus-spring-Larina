@@ -1,15 +1,15 @@
 package ru.otus.dao;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
+import ru.otus.domain.Book;
 import ru.otus.domain.Comment;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+@Component
 public class CommentDaoJpa implements CommentDao {
 
     @PersistenceContext
@@ -45,8 +45,10 @@ public class CommentDaoJpa implements CommentDao {
 
     @Override
     public List<Comment> getByBookId(long bookId) {
-        TypedQuery<Comment> query = em.createQuery("select e from Comment e join fetch e.book where e.book.id = :bookId", Comment.class);
-        query.setParameter("bookId", bookId);
-        return query.getResultList();
+        Book book = em.find(Book.class, bookId);
+        if (book == null) {
+            return List.of();
+        }
+        return book.getComments();
     }
 }

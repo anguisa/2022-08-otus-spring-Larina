@@ -24,27 +24,27 @@ public class Book {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id")
     private Author author;
 
-    @Fetch(FetchMode.SUBSELECT)
-    @ManyToMany(targetEntity = Genre.class, fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+    @ManyToMany(targetEntity = Genre.class, fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
     @JoinTable(name = "book_genre", joinColumns = @JoinColumn(name = "book_id"), inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genres;
+
+    @Fetch(FetchMode.SUBSELECT)
+    @OneToMany(targetEntity = Comment.class, mappedBy = "book", fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+    private List<Comment> comments;
 
     public Book() {
     }
 
-    public Book(Long id, String title) {
-        this(id, title, null, null);
-    }
-
-    public Book(Long id, String title, Author author, List<Genre> genres) {
+    public Book(Long id, String title, Author author, List<Genre> genres, List<Comment> comments) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.genres = genres;
+        this.comments = comments;
     }
 
     public Long getId() {
@@ -80,6 +80,15 @@ public class Book {
 
     public Book setGenres(List<Genre> genres) {
         this.genres = genres;
+        return this;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public Book setComments(List<Comment> comments) {
+        this.comments = comments;
         return this;
     }
 

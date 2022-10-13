@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import ru.otus.dao.BookDao;
@@ -15,7 +16,10 @@ import ru.otus.domain.Author;
 import ru.otus.domain.Book;
 import ru.otus.domain.Comment;
 import ru.otus.domain.Genre;
+import ru.otus.dto.AuthorDto;
+import ru.otus.dto.BookDto;
 import ru.otus.dto.CommentDto;
+import ru.otus.dto.GenreDto;
 import ru.otus.exception.BookNotFoundException;
 
 import java.util.List;
@@ -32,12 +36,15 @@ import static org.mockito.Mockito.when;
 public class CommentServiceImplTest {
 
     private static final Author EXPECTED_AUTHOR = new Author(1L, "Маша Васильева");
+    private static final AuthorDto EXPECTED_AUTHOR_DTO = new AuthorDto(EXPECTED_AUTHOR.getId(), EXPECTED_AUTHOR.getName());
     private static final Genre EXPECTED_GENRE = new Genre(1L, "Стихотворение");
-    private static final Book EXPECTED_BOOK = new Book(1L, "Короткое стихотворение", EXPECTED_AUTHOR, List.of(EXPECTED_GENRE));
+    private static final GenreDto EXPECTED_GENRE_DTO = new GenreDto(EXPECTED_GENRE.getId(), EXPECTED_GENRE.getTitle());
+    private static final Book EXPECTED_BOOK = new Book(1L, "Короткое стихотворение", EXPECTED_AUTHOR, List.of(EXPECTED_GENRE), null);
+    private static final BookDto EXPECTED_BOOK_DTO = new BookDto(EXPECTED_BOOK.getId(), EXPECTED_BOOK.getTitle(), EXPECTED_AUTHOR_DTO, List.of(EXPECTED_GENRE_DTO));
     private static final Comment EXPECTED_COMMENT = new Comment(1L, "Интересно", EXPECTED_BOOK);
-    private static final CommentDto EXPECTED_COMMENT_DTO = new CommentDto(EXPECTED_COMMENT);
+    private static final CommentDto EXPECTED_COMMENT_DTO = new CommentDto(EXPECTED_COMMENT.getId(), EXPECTED_COMMENT.getText(), EXPECTED_BOOK_DTO);
     private static final Comment EXPECTED_COMMENT_2 = new Comment(2L, "Скучно", EXPECTED_BOOK);
-    private static final CommentDto EXPECTED_COMMENT_DTO_2 = new CommentDto(EXPECTED_COMMENT_2);
+    private static final CommentDto EXPECTED_COMMENT_DTO_2 = new CommentDto(EXPECTED_COMMENT_2.getId(), EXPECTED_COMMENT_2.getText(), EXPECTED_BOOK_DTO);
 
     @Autowired
     private CommentService commentService;
@@ -48,9 +55,10 @@ public class CommentServiceImplTest {
     @MockBean
     private CommentDao commentDao;
 
-    // чтобы не поднималась база; используем только сервис
+    // чтобы не поднималась база; используем только сервис и конвертеры
     @Configuration
     @Import(CommentServiceImpl.class)
+    @ComponentScan("ru.otus.dto.converter")
     static class CommentServiceImplConfiguration {
     }
 
@@ -78,8 +86,8 @@ public class CommentServiceImplTest {
     @DisplayName("Бросает исключение при добавлении комментария к несуществующей книге")
     @Test
     void shouldFailWhenInsertCommentWithNotExistedBook() {
-        Comment comment = new Comment(1L, "Интересно", new Book(2L, "Книга"));
-        CommentDto commentDto = new CommentDto(comment);
+        Comment comment = new Comment(1L, "Интересно", new Book(2L, "Книга", EXPECTED_AUTHOR, List.of(EXPECTED_GENRE), null));
+        CommentDto commentDto = new CommentDto(comment.getId(), comment.getText(), new BookDto(comment.getBook().getId()));
 
         assertThatThrownBy(() -> commentService.insert(commentDto))
             .isInstanceOf(BookNotFoundException.class)
@@ -96,11 +104,12 @@ public class CommentServiceImplTest {
 
         String randomTxt = UUID.randomUUID().toString();
 
-        Book bookNew = new Book(2L, "My book " + randomTxt);
+        Book bookNew = new Book(2L, "My book " + randomTxt, EXPECTED_AUTHOR, List.of(EXPECTED_GENRE), null);
         when(bookDao.getById(bookNew.getId())).thenReturn(Optional.of(bookNew));
 
         Comment updatedComment = new Comment(initialComment.getId(), "My title " + randomTxt, bookNew);
-        CommentDto updatedCommentDto = new CommentDto(updatedComment);
+        CommentDto updatedCommentDto = new CommentDto(updatedComment.getId(), updatedComment.getText(),
+            new BookDto(bookNew.getId(), bookNew.getTitle(), EXPECTED_AUTHOR_DTO, List.of(EXPECTED_GENRE_DTO)));
         when(commentDao.getById(initialComment.getId())).thenReturn(Optional.of(updatedComment));
 
         commentService.update(updatedCommentDto);

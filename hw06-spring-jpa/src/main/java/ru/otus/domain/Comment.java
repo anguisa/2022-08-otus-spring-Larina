@@ -15,15 +15,11 @@ public class Comment {
     @Column(name = "comment_text", nullable = false)
     private String text;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "book_id")
     private Book book;
 
     public Comment() {
-    }
-
-    public Comment(Long id, String text) {
-        this(id, text, null);
     }
 
     public Comment(Long id, String text, Book book) {

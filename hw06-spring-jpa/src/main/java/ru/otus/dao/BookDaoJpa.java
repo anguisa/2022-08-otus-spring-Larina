@@ -1,6 +1,6 @@
 package ru.otus.dao;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import ru.otus.domain.Book;
 
 import javax.persistence.EntityGraph;
@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import static org.springframework.data.jpa.repository.EntityGraph.EntityGraphType.FETCH;
 
-@Repository
+@Component
 public class BookDaoJpa implements BookDao {
 
     @PersistenceContext
@@ -54,7 +54,7 @@ public class BookDaoJpa implements BookDao {
     @Override
     public List<Book> getAll() {
         EntityGraph<?> entityGraph = em.getEntityGraph(Book.GRAPH_BOOK_AUTHOR);
-        TypedQuery<Book> query = em.createQuery("select e from Book e", Book.class);
+        TypedQuery<Book> query = em.createQuery("select distinct e from Book e left join fetch e.genres g", Book.class);
         query.setHint(FETCH.getKey(), entityGraph);
         return query.getResultList();
     }

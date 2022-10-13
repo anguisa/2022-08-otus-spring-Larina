@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import ru.otus.dao.AuthorDao;
@@ -15,7 +16,9 @@ import ru.otus.dao.GenreDao;
 import ru.otus.domain.Author;
 import ru.otus.domain.Book;
 import ru.otus.domain.Genre;
+import ru.otus.dto.AuthorDto;
 import ru.otus.dto.BookDto;
+import ru.otus.dto.GenreDto;
 
 import java.util.List;
 import java.util.Map;
@@ -31,9 +34,11 @@ import static org.mockito.Mockito.when;
 public class BookServiceImplTest {
 
     private static final Author EXPECTED_AUTHOR = new Author(1L, "Маша Васильева");
+    private static final AuthorDto EXPECTED_AUTHOR_DTO = new AuthorDto(EXPECTED_AUTHOR.getId(), EXPECTED_AUTHOR.getName());
     private static final Genre EXPECTED_GENRE = new Genre(1L, "Стихотворение");
-    private static final Book EXPECTED_BOOK = new Book(1L, "Короткое стихотворение", EXPECTED_AUTHOR, List.of(EXPECTED_GENRE));
-    private static final BookDto EXPECTED_BOOK_DTO = new BookDto(EXPECTED_BOOK);
+    private static final GenreDto EXPECTED_GENRE_DTO = new GenreDto(EXPECTED_GENRE.getId(), EXPECTED_GENRE.getTitle());
+    private static final Book EXPECTED_BOOK = new Book(1L, "Короткое стихотворение", EXPECTED_AUTHOR, List.of(EXPECTED_GENRE), null);
+    private static final BookDto EXPECTED_BOOK_DTO = new BookDto(EXPECTED_BOOK.getId(), EXPECTED_BOOK.getTitle(), EXPECTED_AUTHOR_DTO, List.of(EXPECTED_GENRE_DTO));
     private static final long EXPECTED_BOOK_COUNT = 1L;
 
     @Autowired
@@ -48,9 +53,10 @@ public class BookServiceImplTest {
     @MockBean
     private GenreDao genreDao;
 
-    // чтобы не поднималась база; используем только сервис
+    // чтобы не поднималась база; используем только сервис и конвертеры
     @Configuration
     @Import(BookServiceImpl.class)
+    @ComponentScan("ru.otus.dto.converter")
     static class BookServiceImplConfiguration {
     }
 
@@ -108,8 +114,9 @@ public class BookServiceImplTest {
         when(genreDao.getByTitle(genreNew.getTitle())).thenReturn(Optional.empty());
         when(genreDao.save(any())).thenReturn(genreNew);
 
-        Book updatedBook = new Book(initialBook.getId(), "My title " + randomTxt, authorNew, List.of(genreNew));
-        BookDto updatedBookDto = new BookDto(updatedBook);
+        Book updatedBook = new Book(initialBook.getId(), "My title " + randomTxt, authorNew, List.of(genreNew), null);
+        BookDto updatedBookDto = new BookDto(updatedBook.getId(), updatedBook.getTitle(),
+            new AuthorDto(authorNew.getId(), authorNew.getName()), List.of(new GenreDto(genreNew.getId(), genreNew.getTitle())));
         when(bookDao.getById(initialBook.getId())).thenReturn(Optional.of(updatedBook));
 
         bookService.update(updatedBookDto);

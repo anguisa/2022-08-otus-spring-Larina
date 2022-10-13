@@ -3,7 +3,7 @@ package ru.otus.shell;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-import ru.otus.dto.BookShortDto;
+import ru.otus.dto.BookDto;
 import ru.otus.dto.CommentDto;
 import ru.otus.service.CommentService;
 
@@ -23,7 +23,7 @@ public class CommentShellService {
     @ShellMethod(value = "Insert new comment", key = {"insert-comment", "ic"})
     public String insertComment(@ShellOption(help = "Comment text", value = {"--text", "--t"}) String commentText,
                                 @ShellOption(help = "Book id", value = {"--id-book", "--ib"}) long bookId) {
-        CommentDto comment = new CommentDto(commentText, new BookShortDto(bookId));
+        CommentDto comment = new CommentDto(commentText, new BookDto(bookId));
         return commentService.insert(comment).toString();
     }
 
@@ -32,7 +32,7 @@ public class CommentShellService {
     public String updateComment(@ShellOption(help = "Comment id", value = {"--id", "--i"}) long commentId,
                                 @ShellOption(help = "Comment text", value = {"--text", "--t"}) String commentText,
                                 @ShellOption(help = "Book id", value = {"--id-book", "--ib"}) long bookId) {
-        CommentDto comment = new CommentDto(commentId, commentText, new BookShortDto(bookId));
+        CommentDto comment = new CommentDto(commentId, commentText, new BookDto(bookId));
         return commentService.update(comment).toString();
     }
 
