@@ -1,0 +1,5 @@
+databaseChangeLog:
+- includeAll:
+    path: db/changelog/1.0/ # changelog-и те же
+- includeAll:
+    path: db/changelog/testdata/ # данные другие
