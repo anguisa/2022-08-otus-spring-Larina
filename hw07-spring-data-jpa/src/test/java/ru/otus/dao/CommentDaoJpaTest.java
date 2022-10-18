@@ -101,13 +101,6 @@ class CommentDaoJpaTest {
         compareComments(actualComment.get(), expectedComment);
     }
 
-    @DisplayName("Возвращает ожидаемый список комментариев по id книги")
-    @Test
-    void shouldReturnExpectedCommentsByBookId() {
-        List<Comment> actualComments = commentDao.findByBookId(EXPECTED_BOOKS.get(0).getId());
-        assertThat(actualComments).containsExactlyInAnyOrderElementsOf(List.of(EXPECTED_COMMENTS.get(0), EXPECTED_COMMENTS.get(1)));
-    }
-
     private void compareComments(Comment actualComment, Comment expectedComment) {
         assertThat(actualComment)
             .usingRecursiveComparison()

@@ -43,7 +43,6 @@ public class CommentServiceImpl implements CommentService {
         return commentConverter.toDto(commentDao.save(comment));
     }
 
-    @Transactional
     @Override
     public void deleteById(long id) {
         commentDao.deleteById(id);
@@ -57,7 +56,11 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(readOnly = true) // чтобы могли извлечься LAZY-сущности (комментарий из книги), которые не инициализируются в dao
     @Override
     public List<CommentDto> findByBookId(long bookId) {
-        return commentDao.findByBookId(bookId).stream().map(commentConverter::toDto).collect(Collectors.toList());
+        Book book = getBook(bookId);
+        if (book.getComments() == null) {
+            return List.of();
+        }
+        return getBook(bookId).getComments().stream().map(commentConverter::toDto).collect(Collectors.toList());
     }
 
     private void populateBook(Comment comment) {
@@ -65,9 +68,13 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private Book getCommentBook(Comment comment) {
-        Optional<Book> book = bookDao.findById(comment.getBook().getId());
+        return getBook(comment.getBook().getId());
+    }
+
+    private Book getBook(long bookId) {
+        Optional<Book> book = bookDao.findById(bookId);
         if (book.isEmpty()) {
-            throw new BookNotFoundException(comment.getBook().getId());
+            throw new BookNotFoundException(bookId);
         }
         return book.get();
     }

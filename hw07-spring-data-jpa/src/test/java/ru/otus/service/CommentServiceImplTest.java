@@ -45,6 +45,7 @@ public class CommentServiceImplTest {
     private static final CommentDto EXPECTED_COMMENT_DTO = new CommentDto(EXPECTED_COMMENT.getId(), EXPECTED_COMMENT.getText(), EXPECTED_BOOK_DTO);
     private static final Comment EXPECTED_COMMENT_2 = new Comment(2L, "Скучно", EXPECTED_BOOK);
     private static final CommentDto EXPECTED_COMMENT_DTO_2 = new CommentDto(EXPECTED_COMMENT_2.getId(), EXPECTED_COMMENT_2.getText(), EXPECTED_BOOK_DTO);
+    private static final Book EXPECTED_BOOK_WITH_COMMENTS = new Book(1L, "Короткое стихотворение", EXPECTED_AUTHOR, List.of(EXPECTED_GENRE), List.of(EXPECTED_COMMENT, EXPECTED_COMMENT_2));
 
     @Autowired
     private CommentService commentService;
@@ -64,11 +65,10 @@ public class CommentServiceImplTest {
 
     @BeforeEach
     public void setUp() {
-        when(bookDao.findById(EXPECTED_BOOK.getId())).thenReturn(Optional.of(EXPECTED_BOOK));
+        when(bookDao.findById(EXPECTED_BOOK.getId())).thenReturn(Optional.of(EXPECTED_BOOK_WITH_COMMENTS));
 
         when(commentDao.save(any())).thenReturn(EXPECTED_COMMENT);
         when(commentDao.findById(EXPECTED_COMMENT.getId())).thenReturn(Optional.of(EXPECTED_COMMENT));
-        when(commentDao.findByBookId(EXPECTED_BOOK.getId())).thenReturn(List.of(EXPECTED_COMMENT, EXPECTED_COMMENT_2));
     }
 
     @DisplayName("Добавляет комментарий к книге в БД")

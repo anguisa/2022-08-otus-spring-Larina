@@ -46,7 +46,6 @@ public class BookServiceImpl implements BookService {
         return bookConverter.toDto(bookDao.save(book));
     }
 
-    @Transactional
     @Override
     public void deleteById(long id) {
         bookDao.deleteById(id);

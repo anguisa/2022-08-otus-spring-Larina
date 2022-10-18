@@ -6,6 +6,4 @@ import ru.otus.domain.Comment;
 import java.util.List;
 
 public interface CommentDao extends JpaRepository<Comment, Long> {
-
-    List<Comment> findByBookId(long bookId);
 }
