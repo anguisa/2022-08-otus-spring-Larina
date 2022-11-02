@@ -1,0 +1,24 @@
+spring:
+  shell:
+    interactive:
+      enabled: false
+  mongodb:
+    embedded:
+      version: 3.5.5
+  data:
+    mongodb:
+      port: 0
+      database: test
+
+logging:
+  level:
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+
+mongock:
+  runner-type: "ApplicationRunner"
+  change-logs-scan-package:
+    - ru.otus.mongock.changelog
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
