@@ -51,9 +51,6 @@ class CommentControllerTest {
     public void setUp() {
         when(commentService.findById(EXPECTED_COMMENT.getId())).thenReturn(Optional.of(EXPECTED_COMMENT_DTO));
         when(commentService.findByBookId(EXPECTED_BOOK.getId())).thenReturn(List.of(EXPECTED_COMMENT_DTO, EXPECTED_COMMENT_DTO_2));
-//        when(bookService.findAll()).thenReturn(List.of(EXPECTED_BOOK_DTO, EXPECTED_BOOK_DTO2));
-//        when(authorService.findAll()).thenReturn(List.of(EXPECTED_AUTHOR_DTO, EXPECTED_AUTHOR_DTO2));
-//        when(genreService.findAll()).thenReturn(List.of(EXPECTED_GENRE_DTO, EXPECTED_GENRE_DTO2));
     }
 
     @DisplayName("Возвращает ожидаемый список комментариев")
@@ -206,38 +203,5 @@ class CommentControllerTest {
                 .containsExactlyInAnyOrderElementsOf(expected);
         }
     }
-/*
-    static class AuthorListMatcher extends AssertionMatcher<List<AuthorDto>> {
 
-        private final List<AuthorDto> expected;
-
-        public AuthorListMatcher(List<AuthorDto> expected) {
-            this.expected = expected;
-        }
-
-        @Override
-        public void assertion(List<AuthorDto> actual) throws AssertionError {
-            assertThat(actual)
-                .usingRecursiveFieldByFieldElementComparator(RecursiveComparisonConfiguration.builder().build())
-                .containsExactlyInAnyOrderElementsOf(expected);
-        }
-    }
-
-
-    static class GenreListMatcher extends AssertionMatcher<List<GenreDto>> {
-
-        private final List<GenreDto> expected;
-
-        public GenreListMatcher(List<GenreDto> expected) {
-            this.expected = expected;
-        }
-
-        @Override
-        public void assertion(List<GenreDto> actual) throws AssertionError {
-            assertThat(actual)
-                .usingRecursiveFieldByFieldElementComparator(RecursiveComparisonConfiguration.builder().build())
-                .containsExactlyInAnyOrderElementsOf(expected);
-        }
-    }
-*/
 }
