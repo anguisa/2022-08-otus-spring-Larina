@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Book library</title>
+        <style type="text/css">
+
+            .books {
+                border: 1px solid darkorchid;
+                width: 800px;
+                border-collapse: separate;
+            }
+
+            .books tr td, th {
+                padding: 1px;
+                border: 1px solid darkorchid;
+            }
+
+        </style>
+    </head>
+
+    <body>
+
+        <h1>Books:</h1>
+
+        <table class="books">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Genres</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr th:each="book : ${books}">
+                <td th:text="${book.id}">1</td>
+                <td th:text="${book.title}">Мастер и Маргарита</td>
+                <td th:text="${book.author.name}">М. Булгаков</td>
+                <td>
+                    <ul>
+                        <li th:each="genre : ${book.genres}" th:text="${genre.title}">Фантастика</li>
+                    </ul>
+                </td>
+                <td>
+                    <a th:href="@{/books/edit(id=${book.id})}" href="edit_book.html" th:text="Edit">Edit</a>
+                </td>
+                <td>
+                    <form action="#" th:action="@{/books/delete(id=${book.id})}" method="post">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+                <td>
+                    <a th:href="@{/books/{bookId}/comments/ (bookId=${book.id})}" href="list_comments.html" th:text="Comments">View comments</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <a href="/books/create">Add new book</a>
+    </body>
+</html>
