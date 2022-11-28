@@ -38,7 +38,7 @@ public class BookShellService {
                              @ShellOption(help = "Author name", value = {"--author", "--a"}) String authorName,
                              @ShellOption(help = "Genre titles (with space as delimiter)", value = {"--genre", "--g"}) String[] genreTitles) {
         BookDto book = new BookDto(bookId, bookTitle, new AuthorDto(authorName), Arrays.stream(genreTitles).map(GenreDto::new).collect(Collectors.toList()));
-        return bookService.update(book).toString();
+        return bookService.update(book).toString(); // необходим отдельный метод в dao - обновление книги без комментариев, иначе удалятся. См. ДЗ homework-11 updateBookWithoutComments
     }
 
     @ShellMethod(value = "Get book by id", key = {"get", "g"})

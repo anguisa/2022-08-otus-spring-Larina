@@ -38,7 +38,7 @@ class BookDaoMongoTest {
         expectedBookInitial.getComments().remove(0);
         Book expectedBook = mongoTemplate.findOne(query, Book.class);
         assertThat(expectedBook).isNotNull();
-        compareBooks(expectedBookInitial, expectedBookInitial);
+        compareBooks(expectedBookInitial, expectedBook);
 
         Optional<Book> actualBook = bookDao.findById(BOOK_1.getId());
 
