@@ -14,3 +14,4 @@
 |[hw08-spring-data-nosql](./hw08-spring-data-nosql)|**Цель:** Использовать MongoDB и spring-data для хранения информации о книгах.<br />**Описание:** Приложение для хранения книг библиотеки с использованием MongoDB.
 |[hw09-spring-mvc](./hw09-spring-mvc)|**Цель:** Разрабатывать полноценные классические Web-приложения.<br />**Описание:** Web-приложение для хранения книг полностью на стеке Spring.
 |[hw10-spring-rest-ajax](./hw10-spring-rest-ajax)|**Цель:** Использовать Spring MVC для разработки современных AJAX/SPA приложений c помощью Spring MVC.<br />**Описание:** Современное web-приложение для хранения книг полностью на стеке Spring.
+|[hw11-spring-webflux](./hw11-spring-webflux)|**Цель:** Разрабатывать Responsive и Resilent приложения на реактивном стеке Spring c помощью Spring Web Flux и Reactive Spring Data Repositories.<br />**Описание:** Приложение для хранения книг на реактивном стеке Spring.
