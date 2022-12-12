@@ -11,21 +11,24 @@ create table user_role (
 );
 
 --changeset olga:2022-12-10-008-acl
+create sequence acl_sid_seq as bigint;
 create table acl_sid (
-	id bigserial not null primary key,
+	id bigint not null default next value for acl_sid_seq primary key, -- auto_increment
 	principal boolean not null,
 	sid varchar(100) not null,
 	constraint unique_uk_1 unique(sid,principal)
 );
 
+create sequence acl_class_seq as bigint;
 create table acl_class (
-	id bigserial not null primary key,
+	id bigint not null default next value for acl_class_seq primary key,
 	class varchar(100) not null,
 	constraint unique_uk_2 unique(class)
 );
 
+create sequence acl_object_identity_seq as bigint;
 create table acl_object_identity (
-	id bigserial primary key,
+	id bigint not null default next value for acl_object_identity_seq primary key,
 	object_id_class bigint not null,
 	object_id_identity bigint not null,
 	parent_object bigint,
@@ -37,8 +40,9 @@ create table acl_object_identity (
 	constraint foreign_fk_3 foreign key(owner_sid)references acl_sid(id)
 );
 
+create sequence acl_entry_seq as bigint;
 create table acl_entry (
-	id bigserial primary key,
+	id bigint not null default next value for acl_entry_seq primary key,
 	acl_object_identity bigint not null,
 	ace_order int not null,
 	sid bigint not null,

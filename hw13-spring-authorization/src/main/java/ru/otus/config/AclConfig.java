@@ -79,6 +79,9 @@ public class AclConfig {
 
     @Bean
     public JdbcMutableAclService aclService() {
-        return new JdbcMutableAclService(dataSource, lookupStrategy(), aclCache());
+        JdbcMutableAclService jdbcMutableAclService = new JdbcMutableAclService(dataSource, lookupStrategy(), aclCache());
+        jdbcMutableAclService.setClassIdentityQuery("select next value for acl_class_seq");
+        jdbcMutableAclService.setSidIdentityQuery("select next value for acl_sid_seq");
+        return jdbcMutableAclService;
     }
 }

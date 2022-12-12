@@ -4,12 +4,18 @@ import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguratio
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.acls.domain.CumulativePermission;
+import org.springframework.security.acls.domain.PrincipalSid;
+import org.springframework.security.acls.model.*;
+import org.springframework.security.test.context.support.WithMockUser;
 import ru.otus.dao.BookDao;
 import ru.otus.dao.CommentDao;
 import ru.otus.domain.Author;
@@ -29,7 +35,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @DisplayName("Тест сервиса комментариев к книгам")
 @SpringBootTest
@@ -56,6 +62,9 @@ public class CommentServiceImplTest {
     @MockBean
     private CommentDao commentDao;
 
+    @MockBean
+    private MutableAclService mutableAclService;
+
     // чтобы не поднималась база; используем только сервис и конвертеры
     @Configuration
     @Import(CommentServiceImpl.class)
@@ -71,15 +80,74 @@ public class CommentServiceImplTest {
         when(commentDao.findById(EXPECTED_COMMENT.getId())).thenReturn(Optional.of(EXPECTED_COMMENT));
     }
 
-    @DisplayName("Добавляет комментарий к книге в БД")
+    @DisplayName("Добавляет комментарий к книге в БД и создаёт один ACL для админа")
+    @WithMockUser(username = "admin")
     @Test
-    void shouldInsertComment() {
+    void shouldInsertCommentAndCreateAclForAdmin() {
+        MutableAcl acl = mock(MutableAcl.class);
+        when(mutableAclService.createAcl(any())).thenReturn(acl);
+        when(acl.getEntries()).thenReturn(List.of());
+
         CommentDto expectedComment = EXPECTED_COMMENT_DTO;
 
         expectedComment = commentService.insert(expectedComment);
 
         Optional<CommentDto> actualComment = commentService.findById(expectedComment.getId());
         compareComments(actualComment, expectedComment);
+
+        verify(mutableAclService, times(1)).updateAcl(any());
+        verify(acl, times(1)).insertAce(
+            eq(0),
+            argThat(permission -> permission.getMask() == 31 && permission instanceof CumulativePermission),
+            argThat(sid -> sid instanceof PrincipalSid && ((PrincipalSid) sid).getPrincipal().equals("admin")),
+            eq(true)
+        );
+    }
+
+    @DisplayName("Добавляет комментарий к книге в БД и создаёт два ACL - для админа и пользователя")
+    @WithMockUser(username = "user")
+    @Test
+    void shouldInsertCommentAndCreateAclForAdminAndUser() {
+        MutableAcl acl = mock(MutableAcl.class);
+        when(mutableAclService.createAcl(any())).thenReturn(acl);
+        when(acl.getEntries()).thenReturn(List.of()).thenReturn(List.of(mock(AccessControlEntry.class)));
+
+        CommentDto expectedComment = EXPECTED_COMMENT_DTO;
+
+        expectedComment = commentService.insert(expectedComment);
+
+        Optional<CommentDto> actualComment = commentService.findById(expectedComment.getId());
+        compareComments(actualComment, expectedComment);
+
+        ArgumentCaptor<Integer> indexCapture = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<Permission> permissionCapture = ArgumentCaptor.forClass(Permission.class);
+        ArgumentCaptor<Sid> sidCapture = ArgumentCaptor.forClass(Sid.class);
+        ArgumentCaptor<Boolean> grantingCapture = ArgumentCaptor.forClass(Boolean.class);
+
+        verify(mutableAclService, times(1)).updateAcl(any());
+        verify(acl, times(2)).insertAce(indexCapture.capture(), permissionCapture.capture(), sidCapture.capture(), grantingCapture.capture());
+
+        List<Integer> indexes = indexCapture.getAllValues();
+        List<Permission> permissions = permissionCapture.getAllValues();
+        List<Sid> sids = sidCapture.getAllValues();
+        List<Boolean> grantings = grantingCapture.getAllValues();
+
+        assertThat(indexes).size().isEqualTo(2);
+        assertThat(permissions).size().isEqualTo(2);
+        assertThat(sids).size().isEqualTo(2);
+        assertThat(grantings).size().isEqualTo(2);
+
+        assertThat(indexes.get(0)).isEqualTo(0);
+        assertThat(indexes.get(1)).isEqualTo(1);
+
+        assertThat(permissions.get(0)).isInstanceOf(CumulativePermission.class).matches(p -> p.getMask() == 31);
+        assertThat(permissions.get(1)).isInstanceOf(CumulativePermission.class).matches(p -> p.getMask() == 15);
+
+        assertThat(sids.get(0)).isInstanceOf(PrincipalSid.class).matches(p -> ((PrincipalSid) p).getPrincipal().equals("admin"));
+        assertThat(sids.get(1)).isInstanceOf(PrincipalSid.class).matches(p -> ((PrincipalSid) p).getPrincipal().equals("user"));
+
+        assertThat(grantings.get(0)).isEqualTo(true);
+        assertThat(grantings.get(1)).isEqualTo(true);
     }
 
     @DisplayName("Бросает исключение при добавлении комментария к несуществующей книге")

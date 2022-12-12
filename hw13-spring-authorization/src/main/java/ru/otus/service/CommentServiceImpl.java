@@ -2,6 +2,13 @@ package ru.otus.service;
 
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.acls.domain.*;
+import org.springframework.security.acls.model.MutableAcl;
+import org.springframework.security.acls.model.MutableAclService;
+import org.springframework.security.acls.model.ObjectIdentity;
+import org.springframework.security.acls.model.Sid;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.dao.BookDao;
@@ -22,11 +29,13 @@ public class CommentServiceImpl implements CommentService {
     private final CommentDao commentDao;
     private final BookDao bookDao;
     private final DtoConverter<Comment, CommentDto> commentConverter;
+    private final MutableAclService mutableAclService;
 
-    public CommentServiceImpl(CommentDao commentDao, BookDao bookDao, DtoConverter<Comment, CommentDto> commentConverter) {
+    public CommentServiceImpl(CommentDao commentDao, BookDao bookDao, DtoConverter<Comment, CommentDto> commentConverter, MutableAclService mutableAclService) {
         this.commentDao = commentDao;
         this.bookDao = bookDao;
         this.commentConverter = commentConverter;
+        this.mutableAclService = mutableAclService;
     }
 
     @Transactional
@@ -34,7 +43,35 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto insert(CommentDto commentDto) {
         Comment comment = commentConverter.fromDto(commentDto);
         populateBook(comment);
-        return commentConverter.toDto(commentDao.save(comment));
+        CommentDto insertedComment = commentConverter.toDto(commentDao.save(comment));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Sid owner = new PrincipalSid(authentication);
+        ObjectIdentity oid = new ObjectIdentityImpl(insertedComment.getClass(), insertedComment.getId());
+
+        String adminPrincipal = "admin";
+        Sid admin = new PrincipalSid(adminPrincipal);
+        MutableAcl acl = mutableAclService.createAcl(oid);
+        acl.setOwner(owner);
+        CumulativePermission cumulativePermissionForAdmin = new CumulativePermission();
+        cumulativePermissionForAdmin.set(BasePermission.ADMINISTRATION);
+        cumulativePermissionForAdmin.set(BasePermission.CREATE);
+        cumulativePermissionForAdmin.set(BasePermission.DELETE);
+        cumulativePermissionForAdmin.set(BasePermission.READ);
+        cumulativePermissionForAdmin.set(BasePermission.WRITE);
+        acl.insertAce(acl.getEntries().size(), cumulativePermissionForAdmin, admin, true);
+
+        if (!adminPrincipal.equals(authentication.getName())) {
+            CumulativePermission cumulativePermissionForOwner = new CumulativePermission();
+            cumulativePermissionForOwner.set(BasePermission.CREATE);
+            cumulativePermissionForOwner.set(BasePermission.DELETE);
+            cumulativePermissionForOwner.set(BasePermission.READ);
+            cumulativePermissionForOwner.set(BasePermission.WRITE);
+            acl.insertAce(acl.getEntries().size(), cumulativePermissionForOwner, owner, true);
+        }
+        mutableAclService.updateAcl(acl);
+
+        return insertedComment;
     }
 
     @PreAuthorize("hasPermission(#commentDto.id, 'ru.otus.dto.CommentDto', 'WRITE')")
