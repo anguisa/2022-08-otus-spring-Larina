@@ -17,3 +17,4 @@
 |[hw11-spring-webflux](./hw11-spring-webflux)|**Цель:** Разрабатывать Responsive и Resilent приложения на реактивном стеке Spring c помощью Spring Web Flux и Reactive Spring Data Repositories.<br />**Описание:** Приложение для хранения книг на реактивном стеке Spring.
 |[hw12-spring-security-auth](./hw12-spring-security-auth)|**Цель:** Защитить Web-приложение аутентифкацией и простой авторизацией.<br />**Описание:** Приложение для хранения книг с использованием Spring Security.
 |[hw13-spring-authorization](./hw13-spring-authorization)|**Цель:** Научиться защищать приложение с помощью полноценной авторизации и разграничением прав доступа.<br />**Описание:** Приложение для хранения книг с безопасностью на основе Spring Security.
+|[hw14-spring-batch](./hw14-spring-batch)|**Цель:** Мигрировать данные с помощью Spring Batch.<br />**Описание:** Приложение на Spring Batch для миграции данных из NoSQL в реляционное хранилище.
