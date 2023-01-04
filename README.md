@@ -19,3 +19,4 @@
 |[hw13-spring-authorization](./hw13-spring-authorization)|**Цель:** Научиться защищать приложение с помощью полноценной авторизации и разграничением прав доступа.<br />**Описание:** Приложение для хранения книг с безопасностью на основе Spring Security.
 |[hw14-spring-batch](./hw14-spring-batch)|**Цель:** Мигрировать данные с помощью Spring Batch.<br />**Описание:** Приложение на Spring Batch для миграции данных из NoSQL в реляционное хранилище.
 |[hw15-spring-integration](./hw15-spring-integration)|**Цель:** Реализовать обработку доменной сущности через каналы Spring Integration.<br />**Описание:** Приложение по превращению гусеницы в бабочку c применением EIP на Spring Integration.
+|[hw16-spring-actuator](./hw16-spring-actuator)|**Цель:** Реализовать production-grade мониторинг и прозрачность в приложении.<br />**Описание:** Приложение с применением Spring Boot Actuator.
