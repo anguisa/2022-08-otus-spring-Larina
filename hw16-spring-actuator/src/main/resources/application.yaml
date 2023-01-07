@@ -34,4 +34,4 @@ management:
       enabled: true
 logging:
   file:
-    name: ./target/logs/application.log
+    name: logs/application.log # не писать в target, это папка для maven, может почистить => логи пропадут
