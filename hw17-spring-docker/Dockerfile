@@ -11,7 +11,9 @@ RUN mvn dependency:resolve
 ADD ./src/ $PROJECT_DIR/src
 RUN mvn -B clean install
 
-FROM bellsoft/liberica-openjdk-alpine:11
+#FROM bellsoft/liberica-openjdk-alpine:11
+#собираем на том же, на чём запускаем
+FROM openjdk:11-jdk-slim
 
 ENV PROJECT_DIR=/opt/project
 RUN mkdir -p $PROJECT_DIR
