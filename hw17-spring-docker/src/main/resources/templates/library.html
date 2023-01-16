@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library</title>
+    <script defer th:src="@{/js/library.js}"></script>
+    <link rel="shortcut icon" href="#">
+    <style type="text/css">
+        .table-fix-head { overflow: auto; height: 200px; }
+        .table-fix-head thead th { position: sticky; top: 0; z-index: 1; }
+
+        .tab-data {
+            border: 1px solid darkorchid;
+            width: 800px;
+            border-collapse: separate;
+        }
+
+        .tab-data tr td, th {
+            padding: 1px;
+            border: 1px solid darkorchid;
+        }
+
+        .button {
+            line-height: 2.5;
+            padding: 0 20px;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+
+        .block_container {
+            display: flex;
+            justify-content: left;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="block_container">
+        <div class="book-form">
+            <form onsubmit="event.preventDefault();" autocomplete="off">
+                <h3>Book Info:</h3>
+
+                <div class="row">
+                    <label for="book-id-input">ID:</label>
+                    <input id="book-id-input" type="text" name="book-id-input" readonly="readonly" />
+                </div>
+
+                <div class="row">
+                    <label for="book-title-input">Title:</label>
+                    <input id="book-title-input" name="book-title-input" type="text"/>
+                </div>
+
+                <div class="row">
+                    <label for="book-author-select">Author:</label>
+                    <select class="form-control" id="book-author-select" name="book-author-select">
+                        <option th:each="author : ${authors}"
+                                th:value="${author.id}"
+                                th:text="${author.name}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <label for="book-genres-select">Genres:</label>
+                    <select class="form-control" id="book-genres-select" name="book-genres-select" multiple="multiple">
+                        <option th:each="genre: ${genres}"
+                                th:value="${genre.id}"
+                                th:text="${genre.title}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <button id="btn-save-book-form" class="button">Add or Edit</button>
+                    <button id="btn-reset-book-form" class="button">Reset</button>
+                </div>
+            </form>
+        </div>
+        <div>
+            <h3>Books:</h3>
+            <div class="table-fix-head">
+                <table class="tab-data" id="tab-books-data">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Author ID</th>
+                        <th>Author Name</th>
+                        <th>Genres ID</th>
+                        <th>Genres Title</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <button id="btn-get-all-books" class="button">Get all</button>
+        </div>
+    </div>
+    <br/>
+    <div class="block_container">
+        <div class="comment-form">
+            <form onsubmit="event.preventDefault();" autocomplete="off">
+                <h3>Comment Info:</h3>
+
+                <div class="row">
+                    <label for="comment-id-input">ID:</label>
+                    <input id="comment-id-input" type="text" name="comment-id-input" readonly="readonly" />
+                </div>
+
+                <div class="row">
+                    <label for="comment-text-input">Text:</label>
+                    <input id="comment-text-input" name="comment-text-input" type="text"/>
+                </div>
+
+                <div class="row">
+                    <button id="btn-save-comment-form" class="button">Add or Edit</button>
+                    <button id="btn-reset-comment-form" class="button">Reset</button>
+                </div>
+            </form>
+        </div>
+        <div>
+            <h3>Comments for book:</h3>
+            <input id="book-id-for-comments-input" type="text" name="book-id-for-comments-input" readonly="readonly" />
+            <div class="table-fix-head">
+                <table class="tab-data" id="tab-comments-data">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Text</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
