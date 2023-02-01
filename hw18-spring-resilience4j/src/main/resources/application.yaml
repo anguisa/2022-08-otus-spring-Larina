@@ -1,0 +1,81 @@
+spring:
+  data:
+    mongodb:
+      database: library
+      port: 27117
+      host: localhost
+
+logging:
+  level:
+    org.springframework.data.mongodb.core.ReactiveMongoTemplate: DEBUG
+
+mongock:
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.mongock.changelog
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, loggers, metrics, logfile
+  endpoint:
+    health:
+      show-details: always
+  health:
+    defaults:
+      enabled: true
+    # включаем метрики
+    circuitbreakers:
+      enabled: true
+    ratelimiters:
+      enabled: true
+
+# стандартный порядок применения : Retry ( CircuitBreaker ( RateLimiter ( TimeLimiter ( Bulkhead  ( Function ) ) ) ) )
+# меняем его с помощью aspectOrder, чтобы сначала был Retry, а потом - CircuitBreaker
+
+# временная блокировка
+resilience4j.circuitbreaker:
+  circuitBreakerAspectOrder: 1
+  configs:
+    default:
+      slidingWindowSize: 10
+      minimumNumberOfCalls: 5
+      permittedNumberOfCallsInHalfOpenState: 3
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      waitDurationInOpenState: 5s
+      failureRateThreshold: 60
+      eventConsumerBufferSize: 10
+      registerHealthIndicator: true # включаем метрики
+  instances:
+    mongoDb:
+      baseConfig: default
+
+# ограничение продолжительности выполнения
+resilience4j.timelimiter:
+  instances:
+    mongoDb:
+      timeoutDuration: 2s
+      cancelRunningFuture: true
+
+# повторение запросов
+resilience4j.retry:
+  retryAspectOrder: 2
+  instances:
+    mongoDb:
+      maxAttempts: 3
+      waitDuration: 10s
+      enableExponentialBackoff: true
+      exponentialBackoffMultiplier: 2
+      retryExceptions:
+        - com.mongodb.MongoException
+      ignoreExceptions:
+        - ru.otus.exception.BookNotFoundException
+        - ru.otus.exception.CommentNotFoundException
+
+# ограничение количества одновременных запросов (SemaphoreBulkhead)
+resilience4j.bulkhead:
+  instances:
+    mongoDb:
+      maxWaitDuration: 10ms
+      maxConcurrentCalls: 10
